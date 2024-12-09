@@ -1,19 +1,14 @@
 <?php
+// File: connection.php
+$host = 'localhost';
+$dbname = 'pmb';
+$username = 'root';
+$password = '';
 
-$host     = "localhost"; // Nama server
-$username = "root";      // Username database
-$password = "";          // Password database (kosong jika default)
-$database = "pmb";       // Nama database
-
-// Membuat koneksi ke MySQL
-$conn = mysqli_connect($host, $username, $password, $database);
-
-// cek  apakah koneksi berhasil
-if ($conn) {
-    echo "Koneksi berhasil.<br />";
-} else {
-    echo "Koneksi Gagal: " . mysqli_connect_error();
-    die();
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Koneksi gagal: " . $e->getMessage());
 }
-
 ?>
