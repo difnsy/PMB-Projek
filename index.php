@@ -1,93 +1,128 @@
-<?php require_once 'koneksi.php';
+<?php
+// File: login.php
+require_once 'koneksi.php';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
+    // Validasi input
+    if (empty($email) || empty($password)) {
+        echo json_encode(["status" => "error", "message" => "Email dan password wajib diisi."]);
+        exit;
+    }
+
+    // Cek apakah email terdaftar
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->execute(['email' => $email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($password, $user['password'])) {
+        // Cek role dan arahkan ke halaman sesuai
+        session_start();
+        $_SESSION['user'] = $user;
+        if ($user['role'] === 'admin') {
+            echo json_encode(["status" => "success", "redirect" => "dashboard/admin.php"]);
+        } elseif ($user['role'] === 'pendaftar') {
+            echo json_encode(["status" => "success", "redirect" => "dashboard/user.php"]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Role tidak valid."]);
+        }
+    } else {
+        echo json_encode(["status" => "error", "message" => "Email atau password salah."]);
+    }
+    exit;
+}
+
+// Validasi akses menu dashboard
+if (isset($_GET['dashboard']) && !isset($_SESSION['user'])) {
+    echo "<script>
+        alert('Anda harus login untuk mengakses menu ini!');
+        window.location.href = 'index.php';
+    </script>";
+    exit;
+}
 ?>
 
-
 <!doctype html>
-<!--
-* Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
-* @version 1.0.0-beta20
-* @link https://tabler.io
-* Copyright 2018-2023 The Tabler Authors
-* Copyright 2018-2023 codecalm.net Paweł Kuna
-* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
--->
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Sign in - PMB IPWIJA.</title>
-    <!-- CSS files -->
-    <link href="assets/css/tabler.min.css?1692870487" rel="stylesheet"/>
-    <link href="assets/css/tabler-flags.min.css?1692870487" rel="stylesheet"/>
-    <link href="assets/css/tabler-payments.min.css?1692870487" rel="stylesheet"/>
-    <link href="assets/css/tabler-vendors.min.css?1692870487" rel="stylesheet"/>
-    <link href="assets/css/demo.min.css?1692870487" rel="stylesheet"/>
+    <title>Sistem Informasi Penerimaan Mahasiswa Baru</title>
+    <link href="assets/css/tabler.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
     <style>
-      @import url('https://rsms.me/inter/inter.css');
-      :root {
-      	--tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
-      }
-      body {
-      	font-feature-settings: "cv03", "cv04", "cv11";
-      }
+        .password-toggle {
+            cursor: pointer;
+        }
     </style>
-  </head>
-  <body  class=" d-flex flex-column">
-    <script src="assets/js/demo-theme.min.js?1692870487"></script>
+</head>
+<body class="d-flex flex-column">
     <div class="page page-center">
-      <div class="container container-tight py-4">
-        <div class="text-center mb-4">
-          <a href="." class="navbar-brand navbar-brand-autodark">
-            <img src="assets/img/logo.jpg" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-          </a>
-        </div>
-        <div class="card card-md">
-          <div class="card-body">
-            <h2 class="h2 text-center mb-4">Portal Pendaftaran Mahasiswa Baru</h2>
-            <form action="./" method="get" autocomplete="off" novalidate>
-              <div class="mb-3">
-                <label class="form-label">Email Atau Username</label>
-                <input type="email" class="form-control" placeholder="your@email.com" autocomplete="off">
-              </div>
-              <div class="mb-2">
-                <label class="form-label">
-                  Password
-                  <span class="form-label-description">
-                    <a href="./forgot-password.html">I forgot password</a>
-                  </span>
-                </label>
-                <div class="input-group input-group-flat">
-                  <input type="password" class="form-control"  placeholder="Your password"  autocomplete="off">
-                  <span class="input-group-text">
-                    <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
-                    </a>
-                  </span>
+        <div class="container container-tight py-4">
+            <form class="card card-md" id="login-form" method="POST">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Sistem Informasi Penerimaan Mahasiswa Baru Universitas IPWIJA</h2>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group input-group-flat">
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required>
+                            <span class="input-group-text password-toggle" id="toggle-password">
+                                <i class="fa fa-eye" id="eye-icon"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <a href="reset_password.php">Lupa password?</a> | <a href="register.php">Registrasi</a>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </div>
                 </div>
-              </div>
-              <div class="mb-2">
-                <label class="form-check">
-                  <input type="checkbox" class="form-check-input"/>
-                  <span class="form-check-label">Remember me on this device</span>
-                </label>
-              </div>
-              <div class="form-footer">
-                <button type="submit" class="btn btn-primary w-100">Sign in</button>
-              </div>
             </form>
-          </div>
-          
-        <div class="text-center text-secondary mt-3">
-         Belum Punya Akun?<a href="register.php" tabindex="-1">Daftar</a>
         </div>
-      </div>
     </div>
-    <!-- Libs JS -->
-    <!-- Tabler Core -->
-    <script src="assets/js/tabler.min.js?1692870487" defer></script>
-    <script src="assets/js/demo.min.js?1692870487" defer></script>
-  </body>
+
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                window.location.href = result.redirect;
+            } else {
+                Swal.fire('Error', result.message, 'error');
+            }
+        });
+    </script>
+</body>
 </html>
