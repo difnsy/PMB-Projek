@@ -1,3 +1,20 @@
+<?php
+// Menghubungkan ke database menggunakan PDO
+include '../../koneksi.php';
+
+try {
+    // Query untuk mengambil data dari tabel
+    $query = "SELECT program_studi_id, nama_program_studi, status_akreditasi FROM program_studi";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+
+    // Ambil semua data
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Query Error: " . $e->getMessage());
+}
+?>
+
 
 <!doctype html>
 <!--
@@ -15,11 +32,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Dashboard - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
     <!-- CSS files -->
-    <link href="../assets/css/tabler.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/tabler-flags.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/tabler-payments.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/demo.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler-flags.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler-payments.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/demo.min.css?1692870487" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -31,6 +48,76 @@
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
       }
+
+      table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      display: none; /* Sembunyikan tabel sampai data dimuat */
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      position: relative;
+    }
+
+    .filter-icon {
+      font-size: 14px;
+      color: #007BFF;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .filter-icon:hover {
+      color: #0056b3;
+    }
+
+    /* CSS untuk Skeleton Loading */
+    .skeleton {
+      background-color: #e0e0e0;
+      height: 20px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+
+    .skeleton-text {
+      background-color: #e0e0e0;
+      height: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+
+    .skeleton-loading {
+      display: block;
+      animation: loading 2s infinite ease-in-out;
+    }
+
+    @keyframes loading {
+      0% {
+        background-color: #e0e0e0;
+      }
+      50% {
+        background-color: #f4f4f4;
+      }
+      100% {
+        background-color: #e0e0e0;
+      }
+    }
+
+    .skeleton-container {
+      display: flex;
+      flex-direction: column;
+    }
+
     </style>
   </head>
   <body >
@@ -45,6 +132,7 @@
           <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <a href=".">
             <img src="../assets/img/logo.ico" width="150" height="50" alt="Tabler" class="navbar-brand-image">
+
             </a>
           </h1>
           <div class="navbar-nav flex-row order-md-last">
@@ -169,7 +257,7 @@
           <div class="navbar">
             <div class="container-xl">
               <ul class="navbar-nav">
-                <li class="nav-item active">
+                <li class="nav-item ">
                   <a class="nav-link" href="http://localhost/PMB-Projek/dashboard/user.php" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
@@ -202,13 +290,13 @@
                 </li>
 
                 
-                <li class="nav-item">
+                <li class="nav-item active">
                   <a class="nav-link" href="menu/program_studi.php" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-school"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" /></svg>
                 </span>
                     <span class="nav-link-title">
-                     Program Studi
+                      Program Studi
                     </span>
                   </a>
                 </li>
@@ -277,7 +365,7 @@
                 <!-- Page pre-title -->
                
                 <h2 class="page-title">
-                  Dashboard
+                 Daftar Program Studi  Universitas IPWIJA
                 </h2>
               </div>
               <!-- Page title actions -->
@@ -293,66 +381,52 @@
         <!-- Page body -->
         <div class="page-body">
   <div class="container-xl">
-    <div class="row row-deck row-cards">
-      <!-- Card 1 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="#status-pendaftaran" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center"> 
-              <div class="subheader">Status Pendaftaran</div>
-              <div class="ms-auto">
-                <i class="fas fa-check-circle text-primary"></i>
-              </div>
-            </div>
-          </div>
-        </a>
+  <!-- Skeleton Loading -->
+  <div id="skeleton-loader" class="skeleton-container">
+        <div class="skeleton skeleton-text skeleton-loading"></div>
+        <div class="skeleton skeleton-text skeleton-loading"></div>
+        <div class="skeleton skeleton-text skeleton-loading"></div>
       </div>
 
-      <!-- Card 2 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="#jadwal-pendaftaran" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="subheader">Jadwal Pendaftaran</div>
-              <div class="ms-auto">
-                <i class="fas fa-calendar-alt text-success"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="http://localhost/PMB-Projek/dashboard/menu/program_studi.php" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="subheader">Program Studi</div>
-              <div class="ms-auto">
-                <i class="fas fa-graduation-cap text-info"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="#compress-pdf" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="subheader">Isi Biodata</div>
-              <div class="ms-auto">
-                
-                <i class=" fa-list text-danger"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
+      <!-- Tabel Data -->
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>
+              ID
+              <i class="fas fa-sort-amount-down-alt filter-icon" onclick="sortTable(0)" title="Urutkan ID"></i>
+            </th>
+            <th>
+              Nama Program Studi
+              <i class="fas fa-sort-amount-down-alt filter-icon" onclick="sortTable(1)" title="Urutkan Nama"></i>
+            </th>
+            <th>
+              Status Akreditasi
+              <i class="fas fa-sort-amount-down-alt filter-icon" onclick="sortTable(2)" title="Urutkan Akreditasi"></i>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if (!empty($rows)): ?>
+            <?php foreach ($rows as $row): ?>
+              <tr>
+                <td><?= htmlspecialchars($row['program_studi_id']) ?></td>
+                <td><?= htmlspecialchars($row['nama_program_studi']) ?></td>
+                <td><?= htmlspecialchars($row['status_akreditasi']) ?></td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="3">Tidak ada data.</td>
+            </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
     </div>
   </div>
+      </div>
 </div>
+
 
         <footer class="footer footer-transparent d-print-none">
           <div class="container-xl">
@@ -489,13 +563,13 @@
       </div>
     </div>
     <!-- Libs JS -->
-    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer></script>
-    <script src="../assets/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer></script>
-    <script src="../assets/libs/jsvectormap/dist/maps/world.js?1692870487" defer></script>
-    <script src="../assets/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer></script>
+    <script src="../../assets/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer></script>
+    <script src="../../assets/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer></script>
+    <script src="../../assets/libs/jsvectormap/dist/maps/world.js?1692870487" defer></script>
+    <script src="../../assets/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer></script>
     <!-- Tabler Core -->
-    <script src="../assets/js/tabler.min.js?1692870487" defer></script>
-    <script src="../assets/js/demo.min.js?1692870487" defer></script>
+    <script src="../../assets/js/tabler.min.js?1692870487" defer></script>
+    <script src="../../assets/js/demo.min.js?1692870487" defer></script>
 
     <script>
     document.getElementById('logoutLink').addEventListener('click', function (event) {
@@ -515,6 +589,56 @@
             }
         });
     });
+
+    let lastSortedColumn = -1; // Variabel untuk melacak kolom yang terakhir diurutkan
+    let sortOrder = 'desc'; // Urutan default adalah descending (terbesar ke terkecil)
+
+    // Fungsi untuk menampilkan data dan menghilangkan skeleton
+    window.onload = function () {
+      const skeletonLoader = document.getElementById('skeleton-loader');
+      const table = document.getElementById('data-table');
+
+      // Sembunyikan skeleton dan tampilkan tabel
+      skeletonLoader.style.display = 'none';
+      table.style.display = 'table';
+    };
+
+    function sortTable(columnIndex) {
+      const table = document.getElementById("data-table");
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+
+      // Cek apakah kolom yang sama yang diklik sebelumnya
+      if (lastSortedColumn === columnIndex) {
+        sortOrder = (sortOrder === 'desc') ? 'asc' : 'desc'; // Toggle urutan
+      } else {
+        sortOrder = 'desc'; // Jika kolom berbeda, defaultkan ke descending
+      }
+
+      // Mengurutkan berdasarkan kolom yang dipilih dari besar ke kecil atau kecil ke besar
+      rows.sort((a, b) => {
+        const aValue = a.cells[columnIndex].textContent.trim().toLowerCase();
+        const bValue = b.cells[columnIndex].textContent.trim().toLowerCase();
+
+        // Jika kolom angka, gunakan parseInt untuk konversi
+        if (!isNaN(aValue) && !isNaN(bValue)) {
+          return sortOrder === 'desc' 
+            ? parseInt(bValue, 10) - parseInt(aValue, 10) 
+            : parseInt(aValue, 10) - parseInt(bValue, 10);
+        }
+
+        // Jika kolom teks, gunakan string comparison
+        return sortOrder === 'desc' 
+          ? bValue.localeCompare(aValue) 
+          : aValue.localeCompare(bValue);
+      });
+
+      // Reorder rows dalam tabel
+      rows.forEach(row => tbody.appendChild(row));
+
+      // Melacak kolom yang terakhir diurutkan
+      lastSortedColumn = columnIndex;
+    }
 </script>
 
   </body>
