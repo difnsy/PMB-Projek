@@ -35,12 +35,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Validasi akses menu dashboard
-if (isset($_GET['dashboard']) && !isset($_SESSION['user'])) {
-    echo "<script>
-        alert('Anda harus login untuk mengakses menu ini!');
-        window.location.href = 'index.php';
-    </script>";
-    exit;
+if (isset($_GET['dashboard'])) {
+    session_start();
+    if (!isset($_SESSION['user'])) {
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Akses Ditolak',
+                text: 'Anda harus login untuk mengakses menu ini!',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = 'index.php';
+            });
+        </script>";
+        exit;
+    }
 }
 ?>
 
@@ -54,6 +63,13 @@ if (isset($_GET['dashboard']) && !isset($_SESSION['user'])) {
     <link href="assets/css/tabler.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "pb2immsqvl");
+</script>
 
     <style>
         .password-toggle {
@@ -62,11 +78,13 @@ if (isset($_GET['dashboard']) && !isset($_SESSION['user'])) {
     </style>
 </head>
 <body class="d-flex flex-column">
+    
     <div class="page page-center">
         <div class="container container-tight py-4">
+        <h2 class="card-title text-center mb-4">Penerimaan Mahasiswa Baru Universitas IPWIJA</h2>
+
             <form class="card card-md" id="login-form" method="POST">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Sistem Informasi Penerimaan Mahasiswa Baru Universitas IPWIJA</h2>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" id="email" class="form-control" placeholder="Enter email" required>
