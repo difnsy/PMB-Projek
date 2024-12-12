@@ -6,12 +6,14 @@ try {
     // Query untuk mengambil data dari tabel
     $query = "SELECT program_studi_id, nama_program_studi, status_akreditasi FROM program_studi";
     $stmt = $pdo->prepare($query);
-    $stmt->execute();
-
+    $stmt->execute();//stmt is statement
+    
     // Ambil semua data
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Query Error: " . $e->getMessage());
+
+    echo "test command";
 }
 ?>
 
