@@ -1,3 +1,10 @@
+<?php
+// Menghubungkan ke database menggunakan PDO
+include '../../koneksi.php';
+
+
+?>
+
 
 <!doctype html>
 <!--
@@ -15,13 +22,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Dashboard - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
     <!-- CSS files -->
-    <link href="../assets/css/tabler.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/tabler-flags.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/tabler-payments.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
-    <link href="../assets/css/demo.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler-flags.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler-payments.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
+    <link href="../../assets/css/demo.min.css?1692870487" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="../assets/libs/sweetalert2/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
       @import url('https://rsms.me/inter/inter.css');
@@ -31,6 +38,76 @@
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
       }
+
+      table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      display: none; /* Sembunyikan tabel sampai data dimuat */
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      position: relative;
+    }
+
+    .filter-icon {
+      font-size: 14px;
+      color: #007BFF;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .filter-icon:hover {
+      color: #0056b3;
+    }
+
+    /* CSS untuk Skeleton Loading */
+    .skeleton {
+      background-color: #e0e0e0;
+      height: 20px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+
+    .skeleton-text {
+      background-color: #e0e0e0;
+      height: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+
+    .skeleton-loading {
+      display: block;
+      animation: loading 2s infinite ease-in-out;
+    }
+
+    @keyframes loading {
+      0% {
+        background-color: #e0e0e0;
+      }
+      50% {
+        background-color: #f4f4f4;
+      }
+      100% {
+        background-color: #e0e0e0;
+      }
+    }
+
+    .skeleton-container {
+      display: flex;
+      flex-direction: column;
+    }
+
     </style>
   </head>
   <body >
@@ -45,6 +122,7 @@
           <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <a href=".">
             <img src="../assets/img/logo.ico" width="150" height="50" alt="Tabler" class="navbar-brand-image">
+
             </a>
           </h1>
           <div class="navbar-nav flex-row order-md-last">
@@ -169,7 +247,7 @@
           <div class="navbar">
             <div class="container-xl">
               <ul class="navbar-nav">
-                <li class="nav-item active">
+                <li class="nav-item ">
                   <a class="nav-link" href="http://localhost/PMB-Projek/dashboard/user.php" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
@@ -202,13 +280,13 @@
                 </li>
 
                 
-                <li class="nav-item">
+                <li class="nav-item active">
                   <a class="nav-link" href="menu/program_studi.php" >
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-school"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" /></svg>
                 </span>
                     <span class="nav-link-title">
-                     Program Studi
+                      Program Studi
                     </span>
                   </a>
                 </li>
@@ -276,9 +354,7 @@
               <div class="col">
                 <!-- Page pre-title -->
                
-                <h2 class="page-title">
-                  Dashboard
-                </h2>
+               
               </div>
               <!-- Page title actions -->
               <div class="col-auto ms-auto d-print-none">
@@ -293,66 +369,14 @@
         <!-- Page body -->
         <div class="page-body">
   <div class="container-xl">
-    <div class="row row-deck row-cards">
-      <!-- Card 1 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="#status-pendaftaran" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center"> 
-              <div class="subheader">Status Pendaftaran</div>
-              <div class="ms-auto">
-                <i class="fas fa-check-circle text-primary"></i>
-              </div>
-            </div>
-          </div>
-        </a>
+  <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-report">
+                    <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                    isi Biodata
+                  </a>
       </div>
-
-      <!-- Card 2 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="#jadwal-pendaftaran" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="subheader">Jadwal Pendaftaran</div>
-              <div class="ms-auto">
-                <i class="fas fa-calendar-alt text-success"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="http://localhost/PMB-Projek/dashboard/menu/program_studi.php" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="subheader">Program Studi</div>
-              <div class="ms-auto">
-                <i class="fas fa-graduation-cap text-info"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="col-sm-12 col-lg-6 mb-3">
-        <a href="#compress-pdf" class="card text-decoration-none">
-          <div class="card-body">
-            <div class="d-flex align-items-center">
-              <div class="subheader">Isi Biodata</div>
-              <div class="ms-auto">
-                
-                <i class=" fa-list text-danger"></i>
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
 </div>
+
 
         <footer class="footer footer-transparent d-print-none">
           <div class="container-xl">
@@ -390,45 +414,24 @@
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">New report</h5>
+            <h5 class="modal-title">Isi Biodata</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input type="text" class="form-control" name="example-text-input" placeholder="Your report name">
+              <label class="form-label">Nama Lengkap</label>
+              <input type="text" class="form-control" name="example-text-input" placeholder="Masukkan Nama Lengkap Anda">
             </div>
-            <label class="form-label">Report type</label>
-            <div class="form-selectgroup-boxes row mb-3">
-              <div class="col-lg-6">
-                <label class="form-selectgroup-item">
-                  <input type="radio" name="report-type" value="1" class="form-selectgroup-input" checked>
-                  <span class="form-selectgroup-label d-flex align-items-center p-3">
-                    <span class="me-3">
-                      <span class="form-selectgroup-check"></span>
-                    </span>
-                    <span class="form-selectgroup-label-content">
-                      <span class="form-selectgroup-title strong mb-1">Simple</span>
-                      <span class="d-block text-secondary">Provide only basic data needed for the report</span>
-                    </span>
-                  </span>
-                </label>
-              </div>
-              <div class="col-lg-6">
-                <label class="form-selectgroup-item">
-                  <input type="radio" name="report-type" value="1" class="form-selectgroup-input">
-                  <span class="form-selectgroup-label d-flex align-items-center p-3">
-                    <span class="me-3">
-                      <span class="form-selectgroup-check"></span>
-                    </span>
-                    <span class="form-selectgroup-label-content">
-                      <span class="form-selectgroup-title strong mb-1">Advanced</span>
-                      <span class="d-block text-secondary">Insert charts and additional advanced analyses to be inserted in the report</span>
-                    </span>
-                  </span>
-                </label>
-              </div>
+            <div class="mb-3">
+              <label class="form-label">NIK</label>
+              <input type="number" class="form-control" name="example-text-input" placeholder="Masukkan NIK Anda">
             </div>
+
+            <div class="mb-3">
+              <label class="form-label">Asal Sekolah</label>
+              <input type="text" class="form-control" name="example-text-input" placeholder="Masukkan NIK Anda">
+            </div>
+           
             <div class="row">
               <div class="col-lg-8">
                 <div class="mb-3">
@@ -489,13 +492,13 @@
       </div>
     </div>
     <!-- Libs JS -->
-    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer></script>
-    <script src="../assets/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer></script>
-    <script src="../assets/libs/jsvectormap/dist/maps/world.js?1692870487" defer></script>
-    <script src="../assets/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer></script>
+    <script src="../../assets/libs/apexcharts/dist/apexcharts.min.js?1692870487" defer></script>
+    <script src="../../assets/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer></script>
+    <script src="../../assets/libs/jsvectormap/dist/maps/world.js?1692870487" defer></script>
+    <script src="../../assets/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer></script>
     <!-- Tabler Core -->
-    <script src="../assets/js/tabler.min.js?1692870487" defer></script>
-    <script src="../assets/js/demo.min.js?1692870487" defer></script>
+    <script src="../../assets/js/tabler.min.js?1692870487" defer></script>
+    <script src="../../assets/js/demo.min.js?1692870487" defer></script>
 
     <script>
     document.getElementById('logoutLink').addEventListener('click', function (event) {
@@ -515,6 +518,8 @@
             }
         });
     });
+
+    
 </script>
 
   </body>
