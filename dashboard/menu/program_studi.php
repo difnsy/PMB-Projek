@@ -13,7 +13,8 @@ try {
 } catch (PDOException $e) {
     die("Query Error: " . $e->getMessage());
 
-    echo "tes tes";
+    echo "haloo";
+    echo "hi";
 }
 ?>
 
